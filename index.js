@@ -1,4 +1,4 @@
-var yandexCheckout = require("yandex-checkout")(
+const YandexCheckout = require("yandex-checkout")(
   "696363",
   "test_Jd71ujCSEaN6cDQooKGnm8dIYYZMU_K5TzLaVRaUnpU"
 );
@@ -35,23 +35,6 @@ app.listen(port, () =>
 //   });
 // Get public token from query string
 
-async function SnipcartPaymert() {
-  const publicToken =
-    "MmU5YzMxNzQtYjE3OC00MDJjLWI5M2QtYWFhZTY2NTk4YWMxNjM3MTY1ODM0ODM5OTE3MTUy";
-
-  // Fetch payment session from API
-  const response = await axios.get(
-    `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
-  );
-
-  // Retrieve body as JSON if the request's status code is successful
-  if (response.ok) {
-    const paymentSession = await response.json();
-    console.log(paymentSession);
-    return paymentSession;
-  }
-}
-
 app.get("/api/", (req, res) => res.send("Hello World!"));
 app.post("/api/methods", (req, res) => {
   // Create a payment method list
@@ -68,10 +51,50 @@ app.post("/api/methods", (req, res) => {
   // Return successful status code and available payment methods
   res.send(paymentMethodList);
 });
+async function getOrder(publicToken) {
+  return axios
+    .get(
+      `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
+    )
+    .then((result) => {
+      console.log(result.data.invoice);
+      return result.data.invoice;
+    });
+}
+async function createPaymentLink(amount) {
+  return YandexCheckout.createPayment({
+    amount: {
+      value: amount,
+      currency: "RUB",
+    },
+    payment_method_data: {
+      type: "bank_card",
+    },
+    confirmation: {
+      type: "redirect",
+      return_url: "https://www.merchant-website.com/return_url",
+    },
+  })
+    .then(function (result) {
+      console.log({ payment: result });
+      return { payment: result };
+    })
+    .catch(function (err) {
+      console.error(err);
+    });
+}
 app.get("/api/payment", async (req, res) => {
-  let publicToken = req.query.publicToken;
-  const response = await axios.get(
-    `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
-  );
-  res.send(response);
+  const publicToken = req.query.publicToken;
+  const order = await getOrder(publicToken);
+  const paymentLink = await createPaymentLink(order.amount);
+  console.log(req.body);
+  res.redirect(paymentLink.confirmation.confirmation_url);
+  //   axios
+  //     .get(
+  //       `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
+  //     )
+  //     .then((response) => {
+  //       console.log(response);
+  //       res.send(response);
+  //     });
 });
