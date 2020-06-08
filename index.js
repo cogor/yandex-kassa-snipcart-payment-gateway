@@ -15,6 +15,7 @@ app.listen(port, () =>
 );
 axios.defaults.headers.common["Authorization"] =
   "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5";
+axios.defaults.with_credentials = true;
 app.get("/api/", (req, res) => res.send("Hello World!"));
 app.post("/api/methods", (req, res) => {
   // Create a payment method list
