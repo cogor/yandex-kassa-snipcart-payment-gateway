@@ -41,7 +41,7 @@ async function getOrder(publicToken) {
     });
 }
 async function generateCallback(publicToken) {
-  return axios({
+  return await axios({
     method: "post",
     url:
       "https://payment.snipcart.com/api/private/custom-payment-gateway/payment",
@@ -55,8 +55,8 @@ async function generateCallback(publicToken) {
       transactionId: "nd",
     },
   }).then((res) => {
-    console.log("link :", res.returnUrl);
-    return res.returnUrl;
+    console.log("link :", res.data.returnUrl);
+    return res.data.returnUrl;
   });
 }
 async function createPaymentLink(amount, link) {
