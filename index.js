@@ -40,7 +40,7 @@ async function getOrder(publicToken) {
       return result.data.invoice;
     });
 }
-async function createPaymentLink(amount, target_id) {
+async function generateCallback(publicToken) {
   const callback_url = await axios({
     method: "POST",
     headers: {
@@ -48,15 +48,15 @@ async function createPaymentLink(amount, target_id) {
         "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
     },
     body: {
-      paymentSessionId: paymentSessionId,
+      paymentSessionId: publicToken,
       state: "processing",
-      error: "error",
-      transactionId: payId,
-      instructions:
-        "Your payment will appear on your statement in the coming days",
-      links: { refunds: `<YOUR_REFUND_URL>?transactionId=${paymentId}` },
+      transactionId: "nd",
     },
   });
+  console.log("link :", callback_url);
+  return callback_url;
+}
+async function createPaymentLink(amount, link) {
   return YandexCheckout.createPayment({
     amount: {
       value: amount,
@@ -67,7 +67,7 @@ async function createPaymentLink(amount, target_id) {
     },
     confirmation: {
       type: "redirect",
-      return_url: callback_url.returnUrl,
+      return_url: link,
     },
   })
     .then(function (result) {
@@ -81,7 +81,8 @@ async function createPaymentLink(amount, target_id) {
 app.get("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
-  const paymentLink = await createPaymentLink(order.amount, order.target_id);
+  const callback = await generateCallback(publicToken);
+  const paymentLink = await createPaymentLink(order.amount, callback);
   let link = paymentLink.payment.confirmation.confirmation_url;
   //   console.log(req.body);
   res.redirect(link);
