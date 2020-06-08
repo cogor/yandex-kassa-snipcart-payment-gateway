@@ -60,7 +60,7 @@ async function generateCallback(publicToken) {
       console.log(err);
     });
 }
-async function createPaymentLink(amount, link) {
+async function createPaymentLink(amount, link, payId) {
   return YandexCheckout.createPayment({
     amount: {
       value: amount,
@@ -72,6 +72,9 @@ async function createPaymentLink(amount, link) {
     confirmation: {
       type: "redirect",
       return_url: link,
+    },
+    metadata: {
+      orderId: payId,
     },
   })
     .then(function (result) {
@@ -86,7 +89,11 @@ app.get("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
   const callback = await generateCallback(order.id);
-  const paymentLink = await createPaymentLink(order.invoice.amount, callback);
+  const paymentLink = await createPaymentLink(
+    order.invoice.amount,
+    callback,
+    order.id
+  );
   let link = paymentLink.payment.confirmation.confirmation_url;
   //   console.log(req.body);
   res.redirect(link);
