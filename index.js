@@ -54,8 +54,8 @@ async function generateCallback(publicToken) {
       },
     })
     .then((res) => {
-      console.log("link :", res);
-      return res;
+      console.log("link :", res.returnUrl);
+      return res.returnUrl;
     });
 }
 async function createPaymentLink(amount, link) {
