@@ -79,6 +79,6 @@ app.get("/api/payment", async (req, res) => {
   //     });
 });
 app.post("/api/update_order", async (req, res) => {
-  console.log(res.body);
+  console.log(req.body);
   res.send("Ok");
 });
