@@ -83,12 +83,13 @@ async function createPaymentLink(amount) {
       console.error(err);
     });
 }
-app.post("/api/payment", async (req, res) => {
+app.get("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
   const paymentLink = await createPaymentLink(order.amount);
+  let link = paymentLink.payment.confirmation.confirmation_url;
   console.log(req.body);
-  res.redirect(paymentLink.confirmation.confirmation_url);
+  res.redirect(link);
   //   axios
   //     .get(
   //       `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
