@@ -40,7 +40,7 @@ async function getOrder(publicToken) {
       return result.data.invoice;
     });
 }
-async function createPaymentLink(amount) {
+async function createPaymentLink(amount, target_id) {
   return YandexCheckout.createPayment({
     amount: {
       value: amount,
@@ -65,7 +65,7 @@ async function createPaymentLink(amount) {
 app.get("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
-  const paymentLink = await createPaymentLink(order.amount);
+  const paymentLink = await createPaymentLink(order.amount, order.target_id);
   let link = paymentLink.payment.confirmation.confirmation_url;
   console.log(req.body);
   res.redirect(link);
@@ -77,4 +77,7 @@ app.get("/api/payment", async (req, res) => {
   //       console.log(response);
   //       res.send(response);
   //     });
+});
+app.post("/api/update_order", async (req, res) => {
+  console.log(res);
 });
