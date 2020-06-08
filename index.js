@@ -41,22 +41,23 @@ async function getOrder(publicToken) {
     });
 }
 async function generateCallback(publicToken) {
-  axios
-    .post({
-      headers: {
-        Authorization:
-          "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
-      },
-      body: {
-        paymentSessionId: publicToken,
-        state: "processing",
-        transactionId: "nd",
-      },
-    })
-    .then((res) => {
-      console.log("link :", res.returnUrl);
-      return res.returnUrl;
-    });
+  return axios({
+    method: "post",
+    url:
+      "https://payment.snipcart.com/api/private/custom-payment-gateway/payment",
+    headers: {
+      Authorization:
+        "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
+    },
+    data: {
+      paymentSessionId: publicToken,
+      state: "processing",
+      transactionId: "nd",
+    },
+  }).then((res) => {
+    console.log("link :", res.returnUrl);
+    return res.returnUrl;
+  });
 }
 async function createPaymentLink(amount, link) {
   return YandexCheckout.createPayment({
