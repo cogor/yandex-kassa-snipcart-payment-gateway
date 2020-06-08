@@ -60,11 +60,14 @@ app.post("/api/methods", (req, res) => {
     {
       id: "yakassa",
       name: "Яндекс Касса",
-      iconUrl: 'https://kassa.yandex.ru/integration/shopify/img/logo.svg',
-      checkoutUrl: "https://yandex.ru/",
+      iconUrl: "https://kassa.yandex.ru/integration/shopify/img/logo.svg",
+      checkoutUrl: "https://magazinarium.ru/api/payment",
     },
   ];
 
   // Return successful status code and available payment methods
   res.send(paymentMethodList);
+});
+app.get("/api/payment", (req, res) => {
+  res.send(req.params.publicToken);
 });
