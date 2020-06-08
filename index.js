@@ -83,7 +83,7 @@ async function createPaymentLink(amount) {
       console.error(err);
     });
 }
-app.get("/api/payment", async (req, res) => {
+app.post("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
   const paymentLink = await createPaymentLink(order.amount);
