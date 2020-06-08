@@ -14,7 +14,7 @@ app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
 axios.defaults.headers.common["Authorization"] =
-  "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5";
+  "Bearer MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5";
 axios.defaults.with_credentials = true;
 app.get("/api/", (req, res) => res.send("Hello World!"));
 app.post("/api/methods", (req, res) => {
