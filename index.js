@@ -53,7 +53,7 @@ async function SnipcartPaymert() {
 }
 
 app.get("/api/", (req, res) => res.send("Hello World!"));
-app.get("/api/methods", (req, res) => {
+app.post("/api/methods", (req, res) => {
   // Create a payment method list
   req.log.info("return methods");
   let paymentMethodList = [
