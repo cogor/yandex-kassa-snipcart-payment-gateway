@@ -41,6 +41,22 @@ async function getOrder(publicToken) {
     });
 }
 async function createPaymentLink(amount, target_id) {
+  const callback_url = await axios({
+    method: "POST",
+    headers: {
+      Authorization:
+        "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
+    },
+    body: {
+      paymentSessionId: paymentSessionId,
+      state: "processing",
+      error: "error",
+      transactionId: payId,
+      instructions:
+        "Your payment will appear on your statement in the coming days",
+      links: { refunds: `<YOUR_REFUND_URL>?transactionId=${paymentId}` },
+    },
+  });
   return YandexCheckout.createPayment({
     amount: {
       value: amount,
@@ -51,11 +67,11 @@ async function createPaymentLink(amount, target_id) {
     },
     confirmation: {
       type: "redirect",
-      return_url: "https://magazinarium.ru/",
+      return_url: callback_url.returnUrl,
     },
   })
     .then(function (result) {
-      //   console.log({ payment: result });
+      console.log({ payment: result });
       return { payment: result };
     })
     .catch(function (err) {
@@ -81,4 +97,8 @@ app.get("/api/payment", async (req, res) => {
 app.post("/api/update_order", async (req, res) => {
   console.log(req.body);
   res.send("Ok");
+});
+app.get("/api/return", async (req, res) => {
+  const paymentSessionId = req.params.psid;
+  const payId = req.params.payid;
 });
