@@ -41,20 +41,22 @@ async function getOrder(publicToken) {
     });
 }
 async function generateCallback(publicToken) {
-  const callback_url = await axios({
-    method: "POST",
-    headers: {
-      Authorization:
-        "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
-    },
-    body: {
-      paymentSessionId: publicToken,
-      state: "processing",
-      transactionId: "nd",
-    },
-  });
-  console.log("link :", callback_url);
-  return callback_url;
+  axios
+    .post({
+      headers: {
+        Authorization:
+          "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
+      },
+      body: {
+        paymentSessionId: publicToken,
+        state: "processing",
+        transactionId: "nd",
+      },
+    })
+    .then((res) => {
+      console.log("link :", res);
+      return res;
+    });
 }
 async function createPaymentLink(amount, link) {
   return YandexCheckout.createPayment({
