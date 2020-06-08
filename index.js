@@ -4,9 +4,10 @@ var yandexCheckout = require("yandex-checkout")(
 );
 const axios = require("axios");
 const express = require("express");
+var pino = require("express-pino-logger")();
 const app = express();
 const port = 1234;
-
+app.use(pino);
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
@@ -54,6 +55,7 @@ async function SnipcartPaymert() {
 app.get("api/", (req, res) => res.send("Hello World!"));
 app.get("api/methods", (req, res) => {
   // Create a payment method list
+  req.log.info("return methods");
   let paymentMethodList = [
     {
       id: "yakassa",
