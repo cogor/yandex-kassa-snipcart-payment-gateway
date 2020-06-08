@@ -13,7 +13,8 @@ app.use(bodyParser.json());
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
-
+axios.defaults.headers.common["Authorization"] =
+  "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5";
 app.get("/api/", (req, res) => res.send("Hello World!"));
 app.post("/api/methods", (req, res) => {
   // Create a payment method list
@@ -41,23 +42,19 @@ async function getOrder(publicToken) {
     });
 }
 async function generateCallback(publicToken) {
-  return await axios({
-    method: "post",
-    url:
+  return axios
+    .post(
       "https://payment.snipcart.com/api/private/custom-payment-gateway/payment",
-    headers: {
-      Authorization:
-        "MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5",
-    },
-    data: {
-      paymentSessionId: publicToken,
-      state: "processing",
-      transactionId: "nd",
-    },
-  }).then((res) => {
-    console.log("link :", res.data.returnUrl);
-    return res.data.returnUrl;
-  });
+      {
+        paymentSessionId: publicToken,
+        state: "processing",
+        transactionId: "nd",
+      }
+    )
+    .then((res) => {
+      console.log("link :", res.data.returnUrl);
+      return res.data.returnUrl;
+    });
 }
 async function createPaymentLink(amount, link) {
   return YandexCheckout.createPayment({
