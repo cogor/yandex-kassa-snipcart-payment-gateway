@@ -109,6 +109,7 @@ app.get("/api/payment", async (req, res) => {
 app.post("/api/update_order", async (req, res) => {
   console.log(req.body);
   res.send("Ok");
+  //TODO дописать методы обновления платежа, ид в метадате
 });
 app.get("/api/return", async (req, res) => {
   const paymentSessionId = req.params.psid;
