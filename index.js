@@ -51,7 +51,7 @@ async function createPaymentLink(amount) {
     },
     confirmation: {
       type: "redirect",
-      return_url: "https://www.merchant-website.com/return_url",
+      return_url: "https://magazinarium.ru/",
     },
   })
     .then(function (result) {
