@@ -68,6 +68,10 @@ app.post("/api/methods", (req, res) => {
   // Return successful status code and available payment methods
   res.send(paymentMethodList);
 });
-app.get("/api/payment", (req, res) => {
-  res.send(req.params.publicToken);
+app.get("/api/payment", async (req, res) => {
+  let publicToken = req.query.publicToken;
+  const response = await axios.get(
+    `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
+  );
+  res.send(response);
 });
