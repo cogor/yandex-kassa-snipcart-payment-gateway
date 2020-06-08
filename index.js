@@ -39,7 +39,7 @@ async function getOrder(publicToken) {
     )
     .then((result) => {
       //   console.log(result.data.invoice);
-      return result.data.invoice;
+      return result.data;
     });
 }
 async function generateCallback(publicToken) {
@@ -85,8 +85,8 @@ async function createPaymentLink(amount, link) {
 app.get("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
-  const callback = await generateCallback(publicToken);
-  const paymentLink = await createPaymentLink(order.amount, callback);
+  const callback = await generateCallback(order.id);
+  const paymentLink = await createPaymentLink(order.invoice.amount, callback);
   let link = paymentLink.payment.confirmation.confirmation_url;
   //   console.log(req.body);
   res.redirect(link);
