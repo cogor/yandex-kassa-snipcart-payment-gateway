@@ -101,6 +101,25 @@ app.get("/api/payment", async (req, res) => {
 app.post("/api/update_order", async (req, res) => {
   console.log(req.body);
   res.send("Ok");
+  const data = req.body;
+  if(data.event === 'payment.succeeded'){
+    console.log('Success')
+  } 
+  switch (data.event) {
+    case 'payment.succeeded':
+      console.log('Success')
+      break;
+    case 'payment.canceled':
+      console.log('Canceled')
+      break;
+      case 'payment.waiting_for_capture': 
+      console.log('Waiting')
+      break;
+    default:
+      console.log('Waiting')
+      break;
+  }
+
   //TODO дописать методы обновления платежа, ид в метадате
 });
 app.get("/api/return", async (req, res) => {
