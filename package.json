@@ -1,4 +1,11 @@
 {
+  "name": "yandex-kassa-snipcart-gateway",
+  "author": {
+    "name": "Ilya Artamonov",
+    "email": "hire@ilya-artamonov.ru",
+    "url": "https://ilya-artamonov.ru"
+  },
+  "version": "1.0",
   "dependencies": {
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
