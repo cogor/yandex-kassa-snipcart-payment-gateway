@@ -3,18 +3,26 @@
 Позволяет добавить оплату через Яндекс кассу на ваш сайт со Snipcart
 
 ## Установка
-`yarn install`
+```
+yarn install
+```
 или
-`npm install` 
+```
+npm install
+```
 
 ## Запуск
 
-`node index.js`
+```
+node index.js
+```
 
 ## Настройки
 Создайте файл .env в корне со следующими параметрами:
 
+```
 YANDEX_SHOP_ID=Идентификатор вашего магазина
 YANDEX_SECRET_KEY=секретный ключ
 SNIPCART_TOKEN=секретный ключ из snipcart
 PORT=порт, который будет прослушиваться
+```
