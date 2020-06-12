@@ -3,6 +3,7 @@ const YandexCheckout = require("yandex-checkout")(
   process.env.YANDEX_SHOP_ID,
   process.env.YANDEX_SECTER_KEY
 );
+const chalk = require('chalk');
 const axios = require("axios");
 const express = require("express");
 const pino = require("express-pino-logger")();
@@ -12,7 +13,7 @@ const port = process.env.PORT;
 app.use(pino);
 app.use(bodyParser.json());
 app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(chalk.blue(`Payment gateway listening at http://localhost:${port}`))
 );
 axios.defaults.headers.common["Authorization"] =
   `Bearer ${process.env.SNIPCART_TOKEN}`;
@@ -54,11 +55,11 @@ function generateCallback(publicToken, state) {
       }
     )
     .then((res) => {
-      console.log("link :", res.data.returnUrl);
+      console.log(chalk.green("Callback link generated"));
       return res.data.returnUrl;
     })
     .catch((err) => {
-      console.log(err);
+      console.log(chalk.red(err));
     });
 }
 function createPaymentLink(amount, link, payId) {
@@ -79,11 +80,11 @@ function createPaymentLink(amount, link, payId) {
     },
   })
     .then(function (result) {
-      console.log({ payment: result });
+      console.log(chalk.green("Payment created"));
       return { payment: result };
     })
     .catch(function (err) {
-      console.error(err);
+      console.error(chalk.red(err));
     });
 }
 app.get("/api/payment", async (req, res) => {
@@ -99,33 +100,27 @@ app.get("/api/payment", async (req, res) => {
   res.redirect(link);
 });
 app.post("/api/update_order", async (req, res) => {
-  console.log(req.body);
+  console.log(chalk.yellow("Updating order"));
   res.send("Ok");
   const data = req.body;
   switch (data.event) {
     case 'payment.succeeded':
       axios.get(await generateCallback(data.object.metadata.orderId, 'processed')).then(res => (
-        console.log(res.status)
+        console.log(chalk.green("Order status changed to 'processed'"))
       ))
       break;
     case 'payment.canceled':
       axios.get(await generateCallback(data.object.metadata.orderId, 'failed')).then(res => (
-        console.log(res.status)
+        console.log(chalk.red("Order status changed to 'failed'"))
       ))
       break;
       case 'payment.waiting_for_capture': 
       axios.get(await generateCallback(data.object.metadata.orderId, 'processing')).then(res => (
-        console.log(res.status)
+        console.log(chalk.red("Order status changed to 'waiting'"))
       ))
       break;
     default:
-      console.log('Waiting')
+      console.log(chalk.red("Order status changed to 'waiting'"))
       break;
   }
-
-  //TODO дописать методы обновления платежа, ид в метадате
-});
-app.get("/api/return", async (req, res) => {
-  const paymentSessionId = req.params.psid;
-  const payId = req.params.payid;
 });
