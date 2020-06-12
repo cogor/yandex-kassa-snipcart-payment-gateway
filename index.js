@@ -43,13 +43,14 @@ function getOrder(publicToken) {
       return result.data;
     });
 }
-function generateCallback(publicToken) {
+function generateCallback(publicToken, state) {
+  const state = state
   return axios
     .post(
       "https://payment.snipcart.com/api/private/custom-payment-gateway/payment",
       {
         paymentSessionId: publicToken,
-        state: "processing",
+        state: state,
         transactionId: "nd",
       }
     )
@@ -89,7 +90,7 @@ function createPaymentLink(amount, link, payId) {
 app.get("/api/payment", async (req, res) => {
   const publicToken = req.query.publicToken;
   const order = await getOrder(publicToken);
-  const callback = await generateCallback(order.id);
+  const callback = await generateCallback(order.id, 'processing');
   const paymentLink = await createPaymentLink(
     order.invoice.amount,
     callback,
@@ -102,18 +103,24 @@ app.post("/api/update_order", async (req, res) => {
   console.log(req.body);
   res.send("Ok");
   const data = req.body;
-  if(data.event === 'payment.succeeded'){
-    console.log('Success')
-  } 
   switch (data.event) {
     case 'payment.succeeded':
-      console.log('Success')
+      const link = await generateCallback(order.id, 'processed');
+      axios.get(link).then(res => (
+        console.log(res.status)
+      ))
       break;
     case 'payment.canceled':
-      console.log('Canceled')
+      const link = await generateCallback(order.id, 'failed');
+      axios.get(link).then(res => (
+        console.log(res.status)
+      ))
       break;
       case 'payment.waiting_for_capture': 
-      console.log('Waiting')
+      const link = await generateCallback(order.id, 'processing');
+      axios.get(link).then(res => (
+        console.log(res.status)
+      ))
       break;
     default:
       console.log('Waiting')
