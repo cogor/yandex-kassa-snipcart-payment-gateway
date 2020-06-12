@@ -44,7 +44,6 @@ function getOrder(publicToken) {
     });
 }
 function generateCallback(publicToken, state) {
-  const state = state
   return axios
     .post(
       "https://payment.snipcart.com/api/private/custom-payment-gateway/payment",
