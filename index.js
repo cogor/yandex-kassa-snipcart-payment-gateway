@@ -1,20 +1,21 @@
+require('dotenv').config()
 const YandexCheckout = require("yandex-checkout")(
-  "696363",
-  "test_Jd71ujCSEaN6cDQooKGnm8dIYYZMU_K5TzLaVRaUnpU"
+  process.env.YANDEX_SHOP_ID,
+  process.env.YANDEX_SECTER_KEY
 );
 const axios = require("axios");
 const express = require("express");
 const pino = require("express-pino-logger")();
 const bodyParser = require("body-parser");
 const app = express();
-const port = 1234;
+const port = process.env.PORT;
 app.use(pino);
 app.use(bodyParser.json());
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
 axios.defaults.headers.common["Authorization"] =
-  "Bearer MzZjNmMyYTYtMDZiZi00YjM5LWFlMzUtOTRmZjY2OTU2YTFlNjM3MTk4NjExOTMwNDYyMDE5";
+  `Bearer ${process.env.SNIPCART_TOKEN}`;
 axios.defaults.headers.post["Content-Type"] = "application/json	";
 app.get("/api/", (req, res) => res.send("Hello World!"));
 app.post("/api/methods", (req, res) => {
@@ -29,10 +30,10 @@ app.post("/api/methods", (req, res) => {
     },
   ];
 
-  // Return successful status code and available payment methods
+  // Return successfully status code and available payment methods
   res.send(paymentMethodList);
 });
-async function getOrder(publicToken) {
+function getOrder(publicToken) {
   return axios
     .get(
       `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
@@ -42,7 +43,7 @@ async function getOrder(publicToken) {
       return result.data;
     });
 }
-async function generateCallback(publicToken) {
+function generateCallback(publicToken) {
   return axios
     .post(
       "https://payment.snipcart.com/api/private/custom-payment-gateway/payment",
@@ -60,7 +61,7 @@ async function generateCallback(publicToken) {
       console.log(err);
     });
 }
-async function createPaymentLink(amount, link, payId) {
+function createPaymentLink(amount, link, payId) {
   return YandexCheckout.createPayment({
     amount: {
       value: amount,
@@ -95,16 +96,7 @@ app.get("/api/payment", async (req, res) => {
     order.id
   );
   let link = paymentLink.payment.confirmation.confirmation_url;
-  //   console.log(req.body);
   res.redirect(link);
-  //   axios
-  //     .get(
-  //       `https://payment.snipcart.com/api/public/custom-payment-gateway/payment-session?publicToken=${publicToken}`
-  //     )
-  //     .then((response) => {
-  //       console.log(response);
-  //       res.send(response);
-  //     });
 });
 app.post("/api/update_order", async (req, res) => {
   console.log(req.body);
