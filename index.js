@@ -104,20 +104,17 @@ app.post("/api/update_order", async (req, res) => {
   const data = req.body;
   switch (data.event) {
     case 'payment.succeeded':
-      let link = await generateCallback(order.id, 'processed');
-      axios.get(link).then(res => (
+      axios.get(await generateCallback(order.id, 'processed')).then(res => (
         console.log(res.status)
       ))
       break;
     case 'payment.canceled':
-      let link = await generateCallback(order.id, 'failed');
-      axios.get(link).then(res => (
+      axios.get(await generateCallback(order.id, 'failed')).then(res => (
         console.log(res.status)
       ))
       break;
       case 'payment.waiting_for_capture': 
-      let link = await generateCallback(order.id, 'processing');
-      axios.get(link).then(res => (
+      axios.get(await generateCallback(order.id, 'processing')).then(res => (
         console.log(res.status)
       ))
       break;
