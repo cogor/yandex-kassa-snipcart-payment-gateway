@@ -1,7 +1,7 @@
 require('dotenv').config()
 const YandexCheckout = require("yandex-checkout")(
   process.env.YANDEX_SHOP_ID,
-  process.env.YANDEX_SECTER_KEY
+  process.env.YANDEX_SECRET_KEY
 );
 const chalk = require('chalk');
 const axios = require("axios");
